@@ -2,7 +2,8 @@
     "name": "beebots/magento2-hyros-webhooks",
     "description": "Hyros Webhooks For Magento",
     "require": {
-        "php": "^8.1"
+        "php": "^8.1",
+        "guzzlehttp/guzzle": "^7.5"
     },
     "type": "magento2-module",
     "version": "1.0.0",
