@@ -8,7 +8,7 @@ use Magento\Framework\Event\ObserverInterface;
 use Psr\Log\LoggerInterface;
 use Throwable;
 
-class InvoiceAfter implements ObserverInterface
+class CreditMemoAfter implements ObserverInterface
 {
     /**
      * @param Config $config
@@ -35,25 +35,25 @@ class InvoiceAfter implements ObserverInterface
             return;
         }
 
-        $invoice = $observer->getData('invoice');
-        if (!$invoice || !$invoice->getOrder()) {
+        $creditMemo = $observer->getData('creditmemo');
+        if (!$creditMemo || !$creditMemo->getOrder()) {
             return;
         }
 
-        $order = $invoice->getOrder();
+        $order = $creditMemo->getOrder();
         try {
             $this->httpClient->post(
                 $this->config->getWebhookUrl(),
                 [
                     'json' => [
                         'transactionId' => $order->getIncrementId(),
-                        'eventType' => 'SALE_CREATED',
+                        'eventType' => 'REFUND',
                         'provider' => 'MAGENTO',
                     ],
                 ]
             );
         } catch (Throwable $exception) {
-            $this->logger->error('There was an error while notifying Hyros of the invoice', ['exception' => $exception]);
+            $this->logger->error('There was an error while notifying Hyros of the credit memo', ['exception' => $exception]);
         }
     }
 }

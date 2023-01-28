@@ -8,7 +8,7 @@ use Magento\Framework\Event\ObserverInterface;
 use Psr\Log\LoggerInterface;
 use Throwable;
 
-class InvoiceAfter implements ObserverInterface
+class CustomerSaveAfter implements ObserverInterface
 {
     /**
      * @param Config $config
@@ -35,25 +35,33 @@ class InvoiceAfter implements ObserverInterface
             return;
         }
 
-        $invoice = $observer->getData('invoice');
-        if (!$invoice || !$invoice->getOrder()) {
+        $originalCustomerData = $observer->getData('orig_customer_data_object');
+        // Only send for new customers
+        if ($originalCustomerData) {
             return;
         }
 
-        $order = $invoice->getOrder();
+        $customerData = $observer->getData('customer_data_object');
+        if (!$customerData) {
+            return;
+        }
+
         try {
             $this->httpClient->post(
                 $this->config->getWebhookUrl(),
                 [
                     'json' => [
-                        'transactionId' => $order->getIncrementId(),
-                        'eventType' => 'SALE_CREATED',
-                        'provider' => 'MAGENTO',
+                            'customerId' => $customerData->getId(),
+                            'customerName' => $customerData->getFirstname(),
+                            'customerLastName' => $customerData->getLastname(),
+                            'customerEmail' => $customerData->getEmail(),
+                            'eventType' => 'LEAD_CREATED',
+                            'provider' => 'MAGENTO'
                     ],
                 ]
             );
         } catch (Throwable $exception) {
-            $this->logger->error('There was an error while notifying Hyros of the invoice', ['exception' => $exception]);
+            $this->logger->error('There was an error while notifying Hyros of the new customer', ['exception' => $exception]);
         }
     }
 }
