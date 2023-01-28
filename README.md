@@ -10,7 +10,7 @@ Disclaimer: Please don't do this directly on a production environment. Install o
     bin/magento setup:upgrade
     ```
 1. Configuration
-   - Navigate to Stores > Configuration > Bee Bots > Hyros Webhooks
+   - Navigate to Admin > Stores > Configuration > Bee Bots > Hyros Webhooks
    - Enable the extension
    - Add the webhook url you get from the Hyros setup instruction
    - Flush the cache
