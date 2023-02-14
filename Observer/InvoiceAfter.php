@@ -36,17 +36,16 @@ class InvoiceAfter implements ObserverInterface
         }
 
         $invoice = $observer->getData('invoice');
-        if (!$invoice || !$invoice->getOrder()) {
+        if (!$invoice || !$invoice->getOrderId()) {
             return;
         }
 
-        $order = $invoice->getOrder();
         try {
             $this->httpClient->post(
                 $this->config->getWebhookUrl(),
                 [
                     'json' => [
-                        'transactionId' => $order->getIncrementId(),
+                        'transactionId' => $invoice->getOrderId(),
                         'eventType' => 'SALE_CREATED',
                         'provider' => 'MAGENTO',
                     ],

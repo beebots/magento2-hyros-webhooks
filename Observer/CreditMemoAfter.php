@@ -36,17 +36,16 @@ class CreditMemoAfter implements ObserverInterface
         }
 
         $creditMemo = $observer->getData('creditmemo');
-        if (!$creditMemo || !$creditMemo->getOrder()) {
+        if (!$creditMemo || !$creditMemo->getId()) {
             return;
         }
 
-        $order = $creditMemo->getOrder();
         try {
             $this->httpClient->post(
                 $this->config->getWebhookUrl(),
                 [
                     'json' => [
-                        'transactionId' => $order->getIncrementId(),
+                        'transactionId' => $creditMemo->getId(),
                         'eventType' => 'REFUND',
                         'provider' => 'MAGENTO',
                     ],

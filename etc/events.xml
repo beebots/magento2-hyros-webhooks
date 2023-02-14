@@ -3,7 +3,7 @@
     <event name="sales_order_invoice_pay">
         <observer name="beebots_hyros_webhooks_invoice_after" instance="BeeBots\HyrosWebhooks\Observer\InvoiceAfter" />
     </event>
-    <event name="sales_order_creditmemo_refund">
+    <event name="sales_order_creditmemo_save_after">
         <observer name="beebots_hyros_webhooks_creditmemo_after" instance="BeeBots\HyrosWebhooks\Observer\CreditMemoAfter" />
     </event>
     <event name="customer_save_after_data_object">
