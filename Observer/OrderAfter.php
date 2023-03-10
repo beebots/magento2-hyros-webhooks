@@ -1,4 +1,7 @@
 <?php
+/** @noinspection PhpUnused */
+/** @noinspection PhpMultipleClassDeclarationsInspection */
+
 namespace BeeBots\HyrosWebhooks\Observer;
 
 use BeeBots\HyrosWebhooks\Model\Config;
@@ -8,7 +11,7 @@ use Magento\Framework\Event\ObserverInterface;
 use Psr\Log\LoggerInterface;
 use Throwable;
 
-class InvoiceAfter implements ObserverInterface
+class OrderAfter implements ObserverInterface
 {
     /**
      * @param Config $config
@@ -35,8 +38,8 @@ class InvoiceAfter implements ObserverInterface
             return;
         }
 
-        $invoice = $observer->getData('invoice');
-        if (!$invoice || !$invoice->getOrderId()) {
+        $order = $observer->getData('order');
+        if (!$order || !$order->getId()) {
             return;
         }
 
@@ -45,14 +48,14 @@ class InvoiceAfter implements ObserverInterface
                 $this->config->getWebhookUrl(),
                 [
                     'json' => [
-                        'transactionId' => $invoice->getOrderId(),
+                        'transactionId' => $order->getId(),
                         'eventType' => 'SALE_CREATED',
                         'provider' => 'MAGENTO',
                     ],
                 ]
             );
         } catch (Throwable $exception) {
-            $this->logger->error('There was an error while notifying Hyros of the invoice', ['exception' => $exception]);
+            $this->logger->error('There was an error while notifying Hyros of the order', ['exception' => $exception]);
         }
     }
 }
